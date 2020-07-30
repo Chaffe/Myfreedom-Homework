@@ -8,4 +8,5 @@ function addTagColorContent(tagName, color, tagContent) {
   let tag = document.createElement(tagName);
   tag.style.backgroundColor = color;
   tag.textContent = tagContent;
+  document.body.appendChild(tag);
 }
