@@ -1,1 +1,0 @@
-1) Как передать функции addCheckBoxText параметр inputAdd из функции addInputAdd;
