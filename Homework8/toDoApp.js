@@ -1,10 +1,7 @@
 /*
-TODO app
-В самом простом виде это будет инпут для ввода задач и список задач с чекбоксами для маркировки задач как сделанных.
-Дальше можно добавлять:
--Перечеркивание задачи при маркировке как сделанной
--Удаление задач
--Можно добавить чекбокс "сделано", редактирование, бутстрап, категории заметок
+1. Сохранять задачи из todo app в local storage. При повторном открытии страницы доставать их оттуда
+1.1* Сохранять не только текст задачи, но и отметку "сделано"
+1.2* Пункты из ДЗ №7. Дополнительные данные (напр. категория) тоже сохранять в local storage
 */
 
 
@@ -21,6 +18,8 @@ function addTaskForm() {
   form.className = 'form';
   document.body.appendChild(form);
 
+  let tasks = [];
+
   addInputAdd(form);
   
   addInputAddButton(form);
@@ -30,7 +29,7 @@ function addTaskForm() {
   form.addEventListener('submit', (event) => {
     event.preventDefault();
 
-    addTasksList();
+    addTasksList(tasks);
   });
 }
 
@@ -147,18 +146,18 @@ function addCategoryAddButton(categoryForm) {
 }
 
 
-function addTasksList() {
-  addcheckBoxForm();
+function addTasksList(tasks) {
+  addcheckBoxForm(tasks);
 }
 
 
-function addcheckBoxForm() {
+function addcheckBoxForm(tasks) {
   let checkBoxForm = document.createElement('form');
   checkBoxForm.className = 'checkbox_form'
   checkBoxForm.style.margin = '10px';
   document.body.appendChild(checkBoxForm);
 
-  addCheckBox(checkBoxForm);
+  addCheckBox(tasks, checkBoxForm);
   
   addDeleteButton(checkBoxForm);
 
@@ -166,18 +165,18 @@ function addcheckBoxForm() {
 }
 
 
-function addCheckBox(checkBoxForm) {
+function addCheckBox(tasks, checkBoxForm) {
   let checkBox = document.createElement('input');
   checkBox.type = 'checkbox';
   checkBoxForm.appendChild(checkBox);
 
-  addCheckBoxText(checkBoxForm, checkBox);
+  addCheckBoxText(tasks, checkBoxForm, checkBox);
 
-  addCheckBoxCategory(checkBoxForm);
+  addCheckBoxCategory(tasks, checkBoxForm);
 }
 
 
-function addCheckBoxText(checkBoxForm, checkBox) {
+function addCheckBoxText(tasks, checkBoxForm, checkBox) {
   let inputAdd = document.querySelector('.input_add');
   let checkText = document.createElement('span');
   checkText.className = 'checkbox_text'
@@ -186,17 +185,38 @@ function addCheckBoxText(checkBoxForm, checkBox) {
 
   inputAdd.value = '';
 
+  addLocalStorageTasks(tasks, checkText);
+
   checkBox.addEventListener('click', () => {
+    let flag = false;
     if(checkBox.checked) {
       checkText.style.textDecoration = 'line-through';
+      flag = true;
     } else {
       checkText.style.textDecoration = "none";
     }
+
+    addLocalStorageTasksDone(tasks, flag)
   });
 }
 
 
-function addCheckBoxCategory(checkBoxForm) {
+function addLocalStorageTasks(tasks, checkText) {
+  tasks.push({taskName: checkText.textContent});
+  localStorage.tasks = JSON.stringify(tasks);
+}
+
+
+function addLocalStorageTasksDone(tasks, checkBox) {
+  /*
+  let n = tasks.length - 1;
+  tasks[n].done = checkBox.checked; 
+  localStorage.tasks = JSON.stringify(tasks);
+  */
+}
+
+
+function addCheckBoxCategory(tasks, checkBoxForm) {
   let selectedOption = document.querySelector('.category_select').value;
   let checkBoxCategory = document.createElement('span');
   checkBoxCategory.className = 'category_text';
@@ -206,6 +226,15 @@ function addCheckBoxCategory(checkBoxForm) {
   checkBoxCategory.style.borderRadius = '2px';
   checkBoxCategory.textContent = selectedOption;
   checkBoxForm.appendChild(checkBoxCategory);
+
+  addLocalStorageCategory(tasks, checkBoxCategory);
+}
+
+
+function addLocalStorageCategory(tasks, checkBoxCategory) {
+  let n = tasks.length - 1;
+  tasks[n].category = checkBoxCategory.textContent;
+  localStorage.tasks = JSON.stringify(tasks);
 }
 
 
