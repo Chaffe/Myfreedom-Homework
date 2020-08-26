@@ -162,6 +162,8 @@ function addcheckBoxForm(tasks) {
   addDeleteButton(checkBoxForm);
 
   addEditButton(checkBoxForm);
+
+  let time = (new Date).getTime();
 }
 
 
@@ -187,7 +189,9 @@ function addCheckBoxText(tasks, checkBoxForm, checkBox) {
 
   addLocalStorageTasks(tasks, checkText);
 
-  checkBox.addEventListener('click', () => {
+  addCheckBoxTimeSpan(tasks, checkBoxForm);
+
+  checkBox.addEventListener('click', (event) => {
     let flag = false;
     if(checkBox.checked) {
       checkText.style.textDecoration = 'line-through';
@@ -196,23 +200,44 @@ function addCheckBoxText(tasks, checkBoxForm, checkBox) {
       checkText.style.textDecoration = "none";
     }
 
-    addLocalStorageTasksDone(tasks, flag)
+    addLocalStorageTasksDone(event, tasks, flag);
   });
 }
 
 
 function addLocalStorageTasks(tasks, checkText) {
-  tasks.push({taskName: checkText.textContent});
+  tasks.push({taskName: checkText.textContent, taskDone : false});
   localStorage.tasks = JSON.stringify(tasks);
 }
 
 
-function addLocalStorageTasksDone(tasks, checkBox) {
-  /*
+function addCheckBoxTimeSpan(tasks, checkBoxForm) {
+  let timeSpan = document.createElement('span');
+  timeSpan.className = 'span_time';
+  timeSpan.textContent = (new Date).getTime();
+  timeSpan.style.display = 'none';
+  checkBoxForm.appendChild(timeSpan);
+
+  addLocalStorageTime(tasks, timeSpan);
+}
+
+
+function addLocalStorageTime(tasks, timeSpan) {
   let n = tasks.length - 1;
-  tasks[n].done = checkBox.checked; 
+  tasks[n].time = timeSpan.textContent;
   localStorage.tasks = JSON.stringify(tasks);
-  */
+}
+
+
+function addLocalStorageTasksDone(event, tasks, flag) {
+  let time = event.target.closest('form').querySelector('.span_time').textContent;
+  for (let element of tasks) {
+    //перебрать все значения time и вернуть равный с данным в функции
+    if (time === element.time) {
+      element.taskDone = flag;
+    }
+  }
+  localStorage.tasks = JSON.stringify(tasks);
 }
 
 
