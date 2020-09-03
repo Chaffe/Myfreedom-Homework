@@ -59,7 +59,7 @@ function getYoutubeRequest(input) {
     addVideoFrame(videoId);
   }
 
-  xmlHttp.open('GET', `https://www.googleapis.com/youtube/v3/search?part=snippet&key=AIzaSyBQd435YohShmfxS1G7GUdAYG-TO_oOH-g&q=${inputText}&type=video`);
+  xmlHttp.open('GET', `https://www.googleapis.com/youtube/v3/search?part=snippet&key=AIzaSyA1IXkWQBqrXs8UBMfZPAIVULxs9L_D_Q4&q=${inputText}&type=video`);
   xmlHttp.setRequestHeader('Accept', 'application/json');
   xmlHttp.send();
 }
