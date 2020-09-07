@@ -15,16 +15,12 @@ function httpGet(url) {
 */
 
 function httpGet(url) {
+  let xhr = new XMLHttpRequest;
+  xhr.open('GET', url);
   let result = {};
-  result.then = function(time) {
-    setTimeout(() => {
-      let xhr = new XMLHttpRequest();
-      xhr.open('GET', url);
 
-      xhr.onload = () => {
-        document.body.textContent = xhr.responseText;
-      }
-    }, time)
+  result.then = function() {
+    
   }
   
   return result;
