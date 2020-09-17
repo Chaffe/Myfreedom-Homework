@@ -1,4 +1,10 @@
 /*
+0. По нажатию на кнопку отправлять PUT запрос на урл одной из задач https://todoappexamplejs.herokuapp.com/items
+При успешном запросе выводить в консоль слово "успех", при неудачном (отсутствует поле title) - слово "ошибка", в любом случае - слово "конец".
+Реализовать и через try/catch/finally await/async, и через then.catch.finally https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Promise/finally
+*/
+
+/*
 Сделать получение/сохранение заметок TODO app через сервер https://todoappexamplejs.herokuapp.com/items
 */
 
@@ -6,7 +12,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   addTaskForm();
 })
-
 
 function addTaskForm() {
   addTaskFormDescription();
@@ -76,8 +81,6 @@ function addHttpRequestDiv(form) {
   document.body.appendChild(httpRequestDiv);
 
   addGetRequestButton(httpRequestDiv);
-
-  //addPostRequestButton(httpRequestDiv);
 }
 
 
@@ -89,19 +92,30 @@ function addGetRequestButton(httpRequestDiv) {
   httpRequestDiv.appendChild(getRequestButton);
 
   getRequestButton.addEventListener('click', () => {
+    let taskIds = [];
     fetch('https://todoappexamplejs.herokuapp.com/items', {
       headers: {
         'Accept': 'application/json'
       }
     })
-    .then(response => response.json())
-    .then(tasks => console.log(tasks[tasks.length-1])); 
+    .then(response => response.json()) 
+    .then(tasks => {
+      for (let task of tasks) {
+        taskIds.push(task.id);
+      }
+      
+      let lastId = Math.max.apply(null, taskIds);
+      for (let task of tasks) {
+        if (lastId === task.id) {
+          console.log(task);
+        }
+      }
+    }); 
   });
 }
 
 
 function addCategorySelect(categoryDiv) {
-
   let categorySelect = document.createElement('select');
   categorySelect.className = 'category_select'
   categorySelect.style.marginLeft = '10px';
@@ -193,8 +207,6 @@ function addcheckBoxForm(tasks) {
   addDeleteButton(checkBoxForm);
 
   addEditButton(checkBoxForm);
-
-  //let time = (new Date).getTime();
 }
 
 
@@ -272,6 +284,7 @@ function addLocalStorageTasksDone(event, tasks, flag) {
     }
   }
   localStorage.tasks = JSON.stringify(tasks);
+  sendPutRequest(tasks);
 }
 
 
@@ -298,19 +311,23 @@ function addLocalStorageCategory(tasks, checkBoxCategory) {
 
 
 function sendPostRequest(tasks) {
-  console.log(tasks[tasks.length - 1]);
-  /*
+  let responseTasks = JSON.parse(tasks);
+  let lastTask = responseTasks[responseTasks.length - 1]
+  
   fetch('https://todoappexamplejs.herokuapp.com/items', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       }, 
-      body: JSON.stringify(tasks) 
+      body: JSON.stringify({
+        title: lastTask.taskName,
+        done: lastTask.taskDone,
+        category: lastTask.category
+      }) 
     })
     .then(response => response.json())
     .then(tasks => console.log(tasks))
-    */
 }
 
 
@@ -322,7 +339,6 @@ function addDeleteButton(checkBoxForm) {
 
 
   deleteButton.addEventListener('click', () => {
-    event.preventDefault();
     checkBoxForm.remove();
   })
 }
@@ -335,7 +351,6 @@ function addEditButton(checkBoxForm) {
   checkBoxForm.appendChild(editButton);
 
   editButton.addEventListener('click', () => {
-    event.preventDefault();
     addFormEdit(checkBoxForm);
   })
 }
@@ -374,4 +389,3 @@ function addInputEditButton(formEdit) {
   inputEditButton.style.marginLeft = '10px';
   formEdit.appendChild(inputEditButton);
 }
-
