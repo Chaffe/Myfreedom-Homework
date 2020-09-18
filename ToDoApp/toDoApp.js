@@ -34,7 +34,7 @@ function addTaskForm() {
   form.addEventListener('submit', (event) => {
     event.preventDefault();
 
-    addTasksList(tasks);
+    addcheckBoxForm(tasks);
   });
 }
 
@@ -144,8 +144,6 @@ function addCategoryButton(categoryDiv) {
   categoryDiv.appendChild(categoryButton);
 
   categoryButton.addEventListener('click', () => {
-    event.preventDefault();
-
     addCategoryForm(categoryDiv);
   })
 }
@@ -188,11 +186,6 @@ function addCategoryAddButton(categoryForm) {
   categoryAddButton.style.marginLeft = '10px';
   categoryAddButton.textContent = 'Добавить';
   categoryForm.appendChild(categoryAddButton);
-}
-
-
-function addTasksList(tasks) {
-  addcheckBoxForm(tasks);
 }
 
 
