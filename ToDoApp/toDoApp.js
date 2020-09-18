@@ -91,27 +91,35 @@ function addGetRequestButton(httpRequestDiv) {
   getRequestButton.textContent = 'GET-запрос';
   httpRequestDiv.appendChild(getRequestButton);
 
-  getRequestButton.addEventListener('click', () => {
-    let taskIds = [];
-    fetch('https://todoappexamplejs.herokuapp.com/items', {
-      headers: {
-        'Accept': 'application/json'
+  getRequestButton.addEventListener('click', async () => { 
+    let requestTasks = await getRequestTasks();
+    
+    let tasksIds = getTaskIds(requestTasks);
+    
+    let lastId = Math.max.apply(null, tasksIds);
+    
+    for (let task of requestTasks) {
+      if (lastId === task.id) {
+        console.log(task);
       }
-    })
-    .then(response => response.json()) 
-    .then(tasks => {
-      for (let task of tasks) {
-        taskIds.push(task.id);
-      }
-      
-      let lastId = Math.max.apply(null, taskIds);
-      for (let task of tasks) {
-        if (lastId === task.id) {
-          console.log(task);
-        }
-      }
-    }); 
+    }
   });
+}
+
+
+async function getRequestTasks() {
+  let promise = await fetch('https://todoappexamplejs.herokuapp.com/items.json');
+  let requestTasks = await promise.json();
+  return requestTasks;
+}
+
+
+function getTaskIds(requestTasks) {
+  let taskIds = [];
+  for (let task of requestTasks) {
+    taskIds.push(task.id)
+  }
+  return taskIds;
 }
 
 
